@@ -1,5 +1,7 @@
 # LMSYS Chatbot Arena 사람의 응답 선호도 예측
 
+![Chatbot Arena 모델 응답 비교 커버](chatbot-arena-notion-cover.png)
+
 동일한 질문에 대한 두 LLM의 응답 중 사람이 어느 쪽을 선호하는지 예측하는 머신러닝 파일럿 프로젝트입니다. 응답 길이, 대화 턴 수, 모델 정보를 활용해 `model_a` 승리 / `model_b` 승리 / `tie`를 분류합니다.
 
 ## 데이터
