@@ -10,7 +10,35 @@
 - 타깃: `winner_model_a`, `winner_model_b`, `winner_tie`를 통합한 `winner`
 - 클래스 비율: A 승리 34.91%, B 승리 34.19%, 무승부 30.90%
 
-원본 데이터는 저장소에 포함하지 않습니다. 실행하려면 대회 데이터를 별도로 준비해 노트북과 같은 폴더에 `train.csv`로 배치하세요.
+원본 데이터는 저장소에 포함하지 않습니다. 대회 데이터를 별도로 준비해 노트북과 같은 폴더에 `train.csv`로 배치하면 실행할 수 있습니다.
+
+## 전체 분석 흐름
+
+데이터 탐색부터 앙상블 실험과 최종 평가까지의 흐름을 확인할 수 있습니다.
+
+```mermaid
+flowchart TD
+    A["Chatbot Arena 데이터"] --> B["탐색적 데이터 분석"]
+    B --> C["전처리 및 특성 생성"]
+    C --> C1["응답 길이·길이 차이·대화 턴 수"]
+    C --> C2["모델명 원-핫 인코딩"]
+    C1 --> D["모델 비교"]
+    C2 --> D
+    D --> D1["로지스틱 회귀"]
+    D --> D2["클래스 가중치 로지스틱 회귀"]
+    D --> D3["Random Forest"]
+    D1 --> E["개선 실험"]
+    D2 --> E
+    D3 --> E
+    E --> E1["GridSearchCV · 확률 보정 · PCA"]
+    E --> E2["앙상블 실험"]
+    E2 --> V["가중 Soft Voting"]
+    E2 --> S["Stacking"]
+    E2 --> P["Stacking + passthrough (오류 기록)"]
+    S --> F["최종 모델: Stacking<br/>로지스틱 회귀 + Random Forest"]
+    F --> G["테스트 평가"]
+    G --> H["Log Loss 1.0121 · Accuracy 49.34%"]
+```
 
 ## 분석 과정
 
@@ -71,11 +99,11 @@ python -m pip install pandas numpy scipy scikit-learn matplotlib notebook
 python -m notebook
 ```
 
-1. 저장소 폴더에서 위 명령을 실행합니다.
-2. 별도로 준비한 `train.csv`를 `6기_강주영.ipynb`와 같은 폴더에 둡니다.
-3. 노트북을 열고 위에서부터 분석 셀을 실행합니다.
+1. 저장소 폴더에서 위 명령을 실행하면 주요 라이브러리를 설치하고 Jupyter Notebook을 시작할 수 있습니다.
+2. 별도로 준비한 `train.csv`를 `6기_강주영.ipynb`와 같은 폴더에 두면 노트북에서 데이터를 불러올 수 있습니다.
+3. 노트북을 열고 위에서부터 분석 셀을 실행하면 분석 과정과 결과를 확인할 수 있습니다.
 
-이 노트북은 실험 기록을 포함합니다. `Stacking + passthrough` 실험은 원본 범주형 입력 때문에 오류가 발생하는 것으로 기록되어 있으므로 해당 셀은 건너뛰세요. PCA 비교 셀의 `proba_before`, `pred_before`는 실행 전에 정의 여부를 확인해야 합니다. 라이브러리 버전이 고정되어 있지 않아 환경에 따라 API 조정이 필요할 수 있습니다. 그래프는 Windows의 `Malgun Gothic` 폰트를 사용하므로 다른 운영체제에서는 설치된 한글 폰트로 변경하세요.
+이 노트북은 실험 기록을 포함합니다. `Stacking + passthrough` 실험은 원본 범주형 입력 때문에 오류가 발생하는 것으로 기록되어 있으며, 해당 셀을 건너뛰고 나머지 분석을 진행할 수 있습니다. PCA 비교 셀의 `proba_before`, `pred_before`는 실행 전에 정의 여부 확인이 필요합니다. 라이브러리 버전이 고정되어 있지 않아 환경에 따라 API 조정이 필요할 수 있습니다. 그래프는 Windows의 `Malgun Gothic` 폰트를 사용하며, 다른 운영체제에서는 설치된 한글 폰트로 변경이 필요합니다.
 
 ## 한계 및 개선 방향
 
